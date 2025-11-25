@@ -24,7 +24,11 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:8000",
                                               "http://127.0.0.1:8000", ]
 
+    # Redis
+    REDIS_HOST: str = os.getenv('REDIS_HOST', 'localhost')
+    REDIS_PORT: int = os.getenv('REDIS_PORT', 6379)
 
+    # Postgres
     POSTGRES_HOST: str = os.getenv('POSTGRES_HOST', 'localhost')
     POSTGRES_USER: str = os.getenv('POSTGRES_USER', 'faquser')
     POSTGRES_PASSWORD: str = os.getenv('POSTGRES_PASSWORD', 'faqpass')
@@ -33,14 +37,13 @@ class Settings(BaseSettings):
     DATABASE_URL: Optional[PostgresDsn] = None
 
     def __init__(self, **kwargs):
-
-        # Call the parent class constructor
         super().__init__(**kwargs)
 
         # If in development and a local DB URL is provided, prefer it
         if (self.ENVIRONMENT or '').lower() == 'development':
             logger.info("Using development (backend running locally)")
             self.POSTGRES_HOST = 'localhost'
+            self.REDIS_HOST = 'localhost'
 
         self.DATABASE_URL = (
             f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
