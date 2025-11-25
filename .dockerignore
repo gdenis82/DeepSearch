@@ -1,0 +1,68 @@
+# Docker ignore file to reduce build context and speed up builds
+
+# VCS
+.git
+.gitignore
+.dockerignore
+
+# Environment/config
+.env
+.env.*
+*.env
+*.local
+
+# IDE/editor
+.vscode/
+.idea/
+*.iml
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+.cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node/Frontend artifacts
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/build/
+frontend/dist/
+.next/
+
+
+# Databases (local/dev)
+*.sqlite3
+
+# Docker compose override and local files
+docker-compose.override.yml
+docker-compose.dev.yml
+
+*.sql
+*.md
