@@ -37,8 +37,8 @@ async def ask_question(request: QuestionRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Question is empty")
 
     with Timer() as timer:
-        cache_key = hash_query(question)
-        cached = get_cache(cache_key)
+        cache_key = await hash_query(question)
+        cached = await get_cache(cache_key)
         if cached:
             if "response_time_ms" in cached:
                 cached["response_time_ms"] = int(timer.elapsed)
@@ -47,8 +47,8 @@ async def ask_question(request: QuestionRequest, db: Session = Depends(get_db)):
 
     with Timer() as timer:
         try:
-            context = retrieve_context(question, k=3)
-            answer, sources, in_toks, out_toks = generate_answer(question, context)
+            context = await retrieve_context(question, k=3)
+            answer, sources, in_toks, out_toks = await generate_answer(question, context)
 
             # Лог в БД
             log_entry = QueryLog(
@@ -72,7 +72,7 @@ async def ask_question(request: QuestionRequest, db: Session = Depends(get_db)):
                 "response_time_ms": int(timer.elapsed)
             }
 
-            set_cache(cache_key, result)
+            await set_cache(cache_key, result)
             logger.debug(
                 f"Q: {question[:50]}... | Time: {timer.elapsed:.0f}ms | "
                 f"Tokens: {in_toks}+{out_toks} | Sources: {sources}"
@@ -110,7 +110,7 @@ async def upload_documents(files: list[UploadFile] = File(...)):
         raise HTTPException(status_code=400, detail="Не удалось сохранить файлы")
 
     try:
-        chunks, docs_count, processed = ingest_documents(doc_dir=doc_dir, file_paths=saved_paths, force=True)
+        chunks, docs_count, processed = await ingest_documents(doc_dir=doc_dir, file_paths=saved_paths, force=True)
     except Exception as e:
         logger.error(f"Ошибка инжеста документов: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Ошибка инжеста: {str(e)}")
