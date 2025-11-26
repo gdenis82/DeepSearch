@@ -33,7 +33,9 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:8000",
                                               "http://127.0.0.1:8000", ]
     # Path to ChromaDB
-    CHROMA_PATH: str = os.getenv('CHROMA_PATH', './data/chroma_db')
+    CHROMA_PATH: str = os.getenv('CHROMA_PATH', './data/chroma')
+    CHROMA_HOST: str = os.getenv('CHROMA_HOST', 'localhost')
+    CHROMA_PORT: int = int(os.getenv('CHROMA_PORT', 8000))
 
     # Path to documents
     DOCUMENTS_PATH: str = os.getenv('DOCUMENTS_PATH', './data/documents')
