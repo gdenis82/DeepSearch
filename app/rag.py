@@ -37,7 +37,7 @@ collection = client.get_or_create_collection(
 )
 
 
-def chunk_text(text: str, source_name: str) -> List[Dict]:
+async def chunk_text(text: str, source_name: str) -> List[Dict]:
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50,
@@ -46,7 +46,7 @@ def chunk_text(text: str, source_name: str) -> List[Dict]:
     chunks = splitter.split_text(text)
     return [{"text": chunk, "source": source_name} for chunk in chunks]
 
-def ingest_documents(doc_dir: str = None, file_paths: Optional[List[str]] = None, force: bool = False) -> Tuple[int, int, List[str]]:
+async def ingest_documents(doc_dir: str = None, file_paths: Optional[List[str]] = None, force: bool = False) -> Tuple[int, int, List[str]]:
     """Добавление документов в Chroma.
 
     Аргументы:
@@ -84,11 +84,11 @@ def ingest_documents(doc_dir: str = None, file_paths: Optional[List[str]] = None
             if os.path.splitext(filename)[1].lower() not in supported_ext:
                 continue
             logging.debug(f"Обработка: {filename}")
-            text = extract_text_from_path(path)
+            text = await extract_text_from_path(path)
             if not text:
                 logging.debug(f"Пустой документ: {filename}")
                 continue
-            chunks = chunk_text(text, filename)
+            chunks = await chunk_text(text, filename)
             if not chunks:
                 logging.debug(f"Нет чанков после разбиения: {filename}")
                 continue
@@ -116,7 +116,7 @@ def ingest_documents(doc_dir: str = None, file_paths: Optional[List[str]] = None
     logging.debug(f"Добавлено {len(texts)} чанков из {len(set(sources))} документов.")
     return len(texts), len(set(processed_files)), processed_files
 
-def retrieve_context(query: str, k: int = 3) -> List[Dict[str, str]]:
+async def retrieve_context(query: str, k: int = 3) -> List[Dict[str, str]]:
     results = collection.query(
         query_texts=[query],
         n_results=k
@@ -129,7 +129,7 @@ def retrieve_context(query: str, k: int = 3) -> List[Dict[str, str]]:
         for doc, meta in zip(results["documents"][0], results["metadatas"][0])
     ]
 
-def generate_answer(question: str, context_list: List[Dict[str, str]]) -> Tuple[str, List[str], int, int]:
+async def generate_answer(question: str, context_list: List[Dict[str, str]]) -> Tuple[str, List[str], int, int]:
     context_text = "\n\n".join(
         f"[{i+1}] {c['text']}" for i, c in enumerate(context_list)
     )
