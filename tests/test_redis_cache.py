@@ -1,23 +1,23 @@
 from app.cache import hash_query, get_cache, set_cache, redis_client
 
 
-def test_cache_integration():
+async def test_cache_integration():
     question = "Test question for integration"
-    cache_key = hash_query(question)
+    cache_key = await hash_query(question)
 
     # удаляем ключ перед началом теста, чтобы гарантировать чистое состояние
     redis_client.delete(cache_key)
 
     try:
         # Проверяем, что кэша нет
-        assert get_cache(cache_key) is None
+        assert await get_cache(cache_key) is None
 
         # Записываем в кэш
         result = {"answer": "Test answer", "source": "integration_test"}
-        set_cache(cache_key, result, ttl=60)
+        await set_cache(cache_key, result, ttl=60)
 
         # Читаем и проверяем
-        retrieved = get_cache(cache_key)
+        retrieved = await get_cache(cache_key)
         assert retrieved == result
 
         # Дополнительно: проверим, что Redis хранит именно JSON-строку
