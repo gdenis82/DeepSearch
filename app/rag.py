@@ -24,6 +24,7 @@ if settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.strip():
         model_name=settings.EMBEDDING_MODEL,
 
     )
+    llm_client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 else:
     # embedding_fn = sentence_transformer_embedding_function.SentenceTransformerEmbeddingFunction(
     #     model_name="all-MiniLM-L6-v2"
@@ -145,7 +146,7 @@ async def generate_answer(question: str, context_list: List[Dict[str, str]]) -> 
     Ответ:"""
 
     if settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.strip():
-        llm_client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+
         try:
             response = llm_client.chat.completions.create(
                 model="gpt-3.5-turbo",
