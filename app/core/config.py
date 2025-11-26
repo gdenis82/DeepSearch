@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     CHROMA_PATH: str = os.getenv('CHROMA_PATH', './data/chroma_db')
 
     # Path to documents
-    DOCUMENTS_PATH: str = os.getenv('DOCUMENTS_PATH', './app/documents')
+    DOCUMENTS_PATH: str = os.getenv('DOCUMENTS_PATH', './data/documents')
 
     # Redis
     REDIS_HOST: str = os.getenv('REDIS_HOST', 'localhost')
