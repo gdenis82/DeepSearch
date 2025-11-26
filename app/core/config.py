@@ -15,8 +15,15 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
 
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
+    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", '')
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", '')
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+
+    ANSWER_PROMPT: str = os.getenv(
+        "ANSWER_PROMPT",
+        """Вы — эксперт по продукту SmartTask. Отвечайте чётко и по делу. 
+        Используйте ТОЛЬКО информацию из приведённого контекста. 
+        Если в контексте нет ответа — напишите: «Извините, я не знаю ответа на этот вопрос».""")
 
     # Security settings
     SECRET_KEY: str
@@ -27,7 +34,10 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:8000",
                                               "http://127.0.0.1:8000", ]
     # Path to ChromaDB
-    CHROMA_PATH: str = os.getenv('CHROMA_PATH', './chroma_db')
+    CHROMA_PATH: str = os.getenv('CHROMA_PATH', './data/chroma_db')
+
+    # Path to documents
+    DOCUMENTS_PATH: str = os.getenv('DOCUMENTS_PATH', './app/documents')
 
     # Redis
     REDIS_HOST: str = os.getenv('REDIS_HOST', 'localhost')
@@ -64,6 +74,5 @@ try:
     settings = Settings()
     logger.info("Settings loaded successfully")
 except Exception as e:
-
     logger.error(f"Error loading settings: {e}")
     raise
