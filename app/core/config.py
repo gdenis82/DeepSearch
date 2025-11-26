@@ -69,8 +69,6 @@ class Settings(BaseSettings):
 
 # Initialize settings with logging
 try:
-    # Use a local logger here to avoid importing app.utils and creating a circular import
-
     settings = Settings()
     logger.info("Settings loaded successfully")
 except Exception as e:
