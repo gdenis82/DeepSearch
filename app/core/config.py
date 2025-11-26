@@ -72,6 +72,8 @@ class Settings(BaseSettings):
             logger.info("Using development (backend running locally)")
             self.POSTGRES_HOST = 'localhost'
             self.REDIS_HOST = 'localhost'
+            self.CHROMA_HOST = 'localhost'
+            self.CHROMA_PORT = 8001
 
         self.DATABASE_URL = (
             f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
