@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger("faq")
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
+async def extract_text_from_pdf(pdf_path: str) -> str:
     reader = PdfReader(pdf_path)
     text = ""
     for page in reader.pages:
@@ -23,11 +23,11 @@ def extract_text_from_pdf(pdf_path: str) -> str:
             text += extracted + "\n"
     return text
 
-def extract_text_from_path(path: str) -> str:
+async def extract_text_from_path(path: str) -> str:
     """Извлекает текст из файла по расширению: pdf/txt/md."""
     ext = os.path.splitext(path)[1].lower()
     if ext == ".pdf":
-        return extract_text_from_pdf(path)
+        return await extract_text_from_pdf(path)
     elif ext in {".txt", ".md"}:
         try:
             with open(path, "r", encoding="utf-8") as f:
