@@ -51,7 +51,7 @@
 2. Клонируйте репозиторий и перейдите в папку:
    ```bash
    git clone https://github.com/gdenis82/SmartTaskFAQ.git
-   cd smart-faq
+   cd SmartTaskFAQ
    ```
    
 3. Установите переменные окружения в файле `.env`:
