@@ -50,7 +50,7 @@
 
 2. Клонируйте репозиторий и перейдите в папку:
    ```bash
-   git clone https://github.com/yourname/smart-faq.git
+   git clone https://github.com/gdenis82/SmartTaskFAQ.git
    cd smart-faq
    ```
    
