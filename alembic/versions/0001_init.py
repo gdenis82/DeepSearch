@@ -28,9 +28,16 @@ def upgrade() -> None:
         sa.Column('response_time_ms', sa.Integer(), nullable=True),
         sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     )
-    op.create_index('ix_query_logs_id', 'query_logs', ['id'])
+    # Индексы, соответствующие актуальной модели QueryLog
+    op.create_index('ix_query_logs_response_time_ms', 'query_logs', ['response_time_ms'])
+    # Составной индекс для пагинации «медленных» записей. 
+    op.create_index('ix_query_logs_slowest', 'query_logs', ['response_time_ms', 'id'])
+    # Индекс по дате создания — для выборок последних логов и очисток по времени
+    op.create_index('ix_query_logs_created_at', 'query_logs', ['created_at'])
 
 
 def downgrade() -> None:
-    op.drop_index('ix_query_logs_id', table_name='query_logs')
+    op.drop_index('ix_query_logs_created_at', table_name='query_logs')
+    op.drop_index('ix_query_logs_slowest', table_name='query_logs')
+    op.drop_index('ix_query_logs_response_time_ms', table_name='query_logs')
     op.drop_table('query_logs')
