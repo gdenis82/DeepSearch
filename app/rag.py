@@ -74,6 +74,28 @@ class ChromaManager:
         coll = await self.get_collection()
         return await coll.query(query_texts=query_texts, n_results=n_results)
 
+    async def get_ids_by_source(self, source: str) -> List[str]:
+        """Вернуть список id по значению metadata.source.
+
+        Используется для проверки существования и последующего удаления документа.
+        """
+        coll = await self.get_collection()
+        try:
+            res = await coll.get(where={"source": source})
+            return res.get("ids", []) or []
+        except Exception as e:
+            logging.error(f"Ошибка чтения из ChromaDB для source='{source}': {e}")
+            raise
+
+    async def delete_by_source(self, source: str) -> None:
+        """Удалить все элементы коллекции с metadata.source == source."""
+        coll = await self.get_collection()
+        try:
+            await coll.delete(where={"source": source})
+        except Exception as e:
+            logging.error(f"Ошибка удаления из ChromaDB для source='{source}': {e}")
+            raise
+
 
 _chroma_manager = ChromaManager()
 
@@ -152,6 +174,19 @@ async def ingest_documents(doc_dir: str = None, file_paths: Optional[List[str]] 
 
     texts = [c["text"] for c in all_chunks]
     metadatas = [{"source": c["source"]} for c in all_chunks]
+
+    # Перед добавлением в коллекцию — если документ уже существует, удаляем все, что связано с ним
+    # (повторная загрузка документа должна привести к его переиндексации)
+    unique_sources = list(set(processed_files))
+    for src in unique_sources:
+        try:
+            existing_ids = await _chroma_manager.get_ids_by_source(src)
+            if existing_ids:
+                logging.debug(f"Найдены существующие записи для '{src}' ({len(existing_ids)} шт.) — удаляем перед переиндексацией.")
+                await _chroma_manager.delete_by_source(src)
+        except Exception as e:
+            logging.error(f"Не удалось проверить/очистить существующие записи для '{src}': {e}")
+            # Продолжаем, попытка добавить заново может помочь выявить проблему
 
     # Уникальные id, чтобы избежать конфликтов при повторных загрузках
     ids = [f"id_{uuid.uuid4()}" for _ in range(len(texts))]
