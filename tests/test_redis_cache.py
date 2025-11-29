@@ -6,7 +6,7 @@ async def test_cache_integration():
     cache_key = await hash_query(question)
 
     # удаляем ключ перед началом теста, чтобы гарантировать чистое состояние
-    redis_client.delete(cache_key)
+    await redis_client.delete(cache_key)
 
     try:
         # Проверяем, что кэша нет
@@ -21,11 +21,11 @@ async def test_cache_integration():
         assert retrieved == result
 
         # Дополнительно: проверим, что Redis хранит именно JSON-строку
-        raw_value = redis_client.get(cache_key)
+        raw_value = await redis_client.get(cache_key)
         assert raw_value is not None
         assert '"answer": "Test answer"' in raw_value
 
     finally:
         # Чистим за собой
-        deleted_count = redis_client.delete(cache_key)
+        deleted_count = await redis_client.delete(cache_key)
         print(f"Cleaned up test key '{cache_key}' (deleted: {deleted_count})")
