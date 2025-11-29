@@ -75,8 +75,10 @@ class Settings(BaseSettings):
             self.CHROMA_HOST = 'localhost'
             self.CHROMA_PORT = 8001
 
+        # Use a synchronous DSN for universal compatibility (Alembic uses sync engine).
+        # Runtime async engine will adapt this to asyncpg in app/db/session.py.
         self.DATABASE_URL = (
-            f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
         prompt_path = os.getenv("ANSWER_PROMPT_PATH", "")
