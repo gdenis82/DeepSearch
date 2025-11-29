@@ -60,7 +60,12 @@ async def ask_question(request: QuestionRequest, db: AsyncSession = Depends(get_
                 response_time_ms=int(timer.elapsed)
             )
             db.add(log_entry)
-            await db.commit()
+            try:
+                await db.commit()
+            except Exception as e:
+                await db.rollback()
+                logger.error(f"Error saving query log: {e}", exc_info=True)
+                raise e
 
             result = {
                 "answer": answer,
