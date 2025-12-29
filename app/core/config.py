@@ -11,7 +11,7 @@ load_dotenv(find_dotenv())
 
 class Settings(BaseSettings):
     ENVIRONMENT: str
-    PROJECT_NAME: str = "SmartTask FAQ"
+    PROJECT_NAME: str = "DeepSearch"
     API_V1_STR: str = "/api/v1"
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
 
@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
 
 
-    ANSWER_PROMPT: str = """Ты помощник, который отвечает на вопросы пользователей SmartTask, 
+    ANSWER_PROMPT: str = """Ты помощник, который отвечает на вопросы пользователей DeepSearch,
     используя предоставленный контекст из документации."""
 
     # Security settings
@@ -39,6 +39,8 @@ class Settings(BaseSettings):
 
     # Path to documents
     DOCUMENTS_PATH: str = os.getenv('DOCUMENTS_PATH', './data/documents')
+    if not os.path.exists(DOCUMENTS_PATH):
+        os.makedirs(DOCUMENTS_PATH)
 
     # Redis
     REDIS_HOST: str = os.getenv('REDIS_HOST', 'localhost')
@@ -46,9 +48,9 @@ class Settings(BaseSettings):
 
     # Postgres
     POSTGRES_HOST: str = os.getenv('POSTGRES_HOST', 'localhost')
-    POSTGRES_USER: str = os.getenv('POSTGRES_USER', 'faquser')
-    POSTGRES_PASSWORD: str = os.getenv('POSTGRES_PASSWORD', 'faqpass')
-    POSTGRES_DB: str = os.getenv('POSTGRES_DB', 'faqdb')
+    POSTGRES_USER: str = os.getenv('POSTGRES_USER', 'postgres')
+    POSTGRES_PASSWORD: str = os.getenv('POSTGRES_PASSWORD', 'postgres')
+    POSTGRES_DB: str = os.getenv('POSTGRES_DB', 'postgres')
     POSTGRES_PORT: int = os.getenv('POSTGRES_PORT', 5432)
     DATABASE_URL: Optional[PostgresDsn] = None
 
