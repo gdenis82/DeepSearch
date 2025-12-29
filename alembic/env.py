@@ -36,9 +36,7 @@ def get_db_url() -> str:
       1) DATABASE_URL env var
       2) Construct from POSTGRES_* env vars
     """
-    url = settings.DATABASE_URL
-    if url:
-        return url
+
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     host = settings.POSTGRES_HOST
@@ -46,16 +44,6 @@ def get_db_url() -> str:
     db = settings.POSTGRES_DB
     return f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
-
-def _make_async_url(url: str) -> str:
-    """Convert sync DSN to asyncpg DSN for AsyncEngine if needed."""
-    if not url:
-        return url
-    if url.startswith("postgresql+asyncpg://"):
-        return url
-    if url.startswith("postgresql://"):
-        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
 
 
 def run_migrations_offline() -> None:
@@ -86,7 +74,7 @@ def do_run_migrations(connection) -> None:
 
 async def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section) or {}
-    configuration["sqlalchemy.url"] = _make_async_url(get_db_url())
+    configuration["sqlalchemy.url"] = get_db_url()
 
     connectable = async_engine_from_config(
         configuration,
