@@ -126,7 +126,7 @@ async def ask_question(request: QuestionRequest, db: AsyncSession = Depends(get_
 
 @api_router.post("/documents")
 async def upload_documents(files: list[UploadFile] = File(...)):
-    """Загрузка документов в базу знаний (поддержка: txt, md, pdf)."""
+    """Загрузка документов в базу знаний (поддержка: txt, md, pdf, docx)."""
     import os
     saved_paths = []
     doc_dir = settings.DOCUMENTS_PATH
