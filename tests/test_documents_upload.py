@@ -5,8 +5,8 @@ from app.core.config import settings
 
 def test_upload_documents_txt():
     files = [
-        ("files", ("sample.txt", b"This is a small test document about SmartTask.", "text/plain")),
-        ("files", ("notes.md", b"# Header\nSome markdown content about SmartTask.", "text/markdown")),
+        ("files", ("sample.txt", b"This is a small test document about DeepSearch.", "text/plain")),
+        ("files", ("notes.md", b"# Header\nSome markdown content about DeepSearch.", "text/markdown")),
     ]
 
     with TestClient(app) as client:
