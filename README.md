@@ -1,4 +1,4 @@
-# DeepSearch — RAG сервис на FastAPI
+# RAG сервис на FastAPI
 
 
   ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
